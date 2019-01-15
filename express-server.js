@@ -56,28 +56,12 @@ app.get('/urls/:id', function(request, response){
 app.post('/urls', function(request, response){
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = request.body.longURL;
-  console.log(request.body.longURL);
-  console.log(urlDatabase);
-  response.send('Ok');
+  let templateVars = { shortURL: newShortURL, longURL: urlDatabase[newShortURL] };
+
+  response.render('urls-show', templateVars );
+
 });
 
 app.listen(PORT, function(){
   console.log(`Example app listening on port ${PORT}`);
 });
-
-// var uid = function() {
-//   return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-// };
-
-// // adds a track to the library
-
-// var addTrack = function (name, artist, album) {
-
-//   var newTrackID = uid();
-//   library.tracks[newTrackID] = {};
-//   library.tracks[newTrackID].id = newTrackID;
-//   library.tracks[newTrackID].name = name ;
-//   library.tracks[newTrackID].artist = artist;
-//   library.tracks[newTrackID].album = album;
-
-// };
