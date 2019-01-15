@@ -26,7 +26,7 @@ app.get('/hello', function(request, response){
 
 app.get('/urls', function(request, response){
   let pageVariables = { urls: urlDatabase };
-  resonse.render('urls-index', pageVariables);
+  response.render('urls-index', pageVariables);
 });
 
 app.listen(PORT, function(){
