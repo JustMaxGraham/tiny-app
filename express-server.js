@@ -29,6 +29,11 @@ app.get('/urls', function(request, response){
   response.render('urls-index', pageVariables);
 });
 
+app.get('/urls/:id', function(request, response){
+  let templateVars = { shortURL: request.params.id, longURL: urlDatabase[request.params.id] };
+  response.render('urls-show', templateVars);
+});
+
 app.listen(PORT, function(){
   console.log(`Example app listening on port ${PORT}`);
 });
