@@ -7,7 +7,7 @@ function generateRandomString() {
   for (let i = 0; i <= 6; i ++){
     randomString += possibleChars[Math.floor(Math.random() * possibleChars.length)];
   }
-  console.log(randomString);
+  return (randomString);
 }
 
 generateRandomString();
@@ -54,7 +54,10 @@ app.get('/urls/:id', function(request, response){
 });
 
 app.post('/urls', function(request, response){
-  console.log(request.body);
+  let newShortURL = generateRandomString();
+  urlDatabase[newShortURL] = request.body.longURL;
+  console.log(request.body.longURL);
+  console.log(urlDatabase);
   response.send('Ok');
 });
 
