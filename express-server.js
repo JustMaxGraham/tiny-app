@@ -6,6 +6,9 @@ const PORT = 8080; //default post 8080
 
 app.set('view engine', 'ejs');
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -29,9 +32,18 @@ app.get('/urls', function(request, response){
   response.render('urls-index', pageVariables);
 });
 
+app.get('/urls/new', function(request, response){
+  response.render('urls-new');
+});
+
 app.get('/urls/:id', function(request, response){
   let templateVars = { shortURL: request.params.id, longURL: urlDatabase[request.params.id] };
   response.render('urls-show', templateVars);
+});
+
+app.post('/urls', function(request, response){
+  console.log(request.body);
+  response.send('Ok');
 });
 
 app.listen(PORT, function(){

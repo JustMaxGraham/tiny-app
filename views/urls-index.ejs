@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
-<head>
-    <title>TinyApp</title>
-</head>
+  <head>
+      <title>TinyApp</title>
+  </head>
 
-<body>
+  <body>
 
-<header>
-  <% include ./partials/_header.ejs %>
-</header>
+    <header>
+      <% include ./partials/_header %>
+    </header>
 
-<ul>
-  <% for (url in urls) { %>
-      <li><%= url %> - <%= urls[url] %></li>
-  <% }; %>
-</ul>
+    <ul>
+      <% for (url in urls) { %>
+          <li><%= url %> - <%= urls[url] %></li>
+      <% }; %>
+    </ul>
 
-<a href="#">Click here to create a new TinyLink</a>
+    <a href="#">Click here to create a new TinyLink</a>
 
-</body>
+  </body>
 
 </html>
