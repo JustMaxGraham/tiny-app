@@ -16,7 +16,9 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default post 8080
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
@@ -65,21 +67,24 @@ app.post('/urls/:id', function(request, response){
 //Create a new tiny url for given long url.
 //Add to database. render new page with the new pair of urls.
 app.post('/urls', function(request, response){
+
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = request.body.longURL;
-  //let templateVars = { shortURL: newShortURL, longURL: urlDatabase[newShortURL] };
+
   let pageVariables = { urls: urlDatabase };
   response.render('urls-index', pageVariables);
-  //response.render('urls-show', templateVars );
 
 });
 
 app.post('/urls/:tinyUrl/delete', function(request, response){
   delete urlDatabase[request.params.tinyUrl];
-  //let templateVars = { shortURL: newShortURL, longURL: urlDatabase[newShortURL] };
-  //let pageVariables = { urls: urlDatabase };
-  //response.render('urls-index', pageVariables);
-  //response.render('urls-show', templateVars );
+  response.redirect('/urls');
+});
+
+app.post('/login', function(request, response){
+  //console.log(request.body.username);
+  response.cookie('username', request.body.username);
+  //console.log(request.cookies);
   response.redirect('/urls');
 
 });
