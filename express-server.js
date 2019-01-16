@@ -45,17 +45,27 @@ app.get('/hello', function(request, response){
 
 //When /urls is requested, send 'urls-index' page, with data
 app.get('/urls', function(request, response){
-  let pageVariables = { urls: urlDatabase };
+  let pageVariables = {
+    urls: urlDatabase,
+    username: request.cookies["username"]
+  };
   response.render('urls-index', pageVariables);
 });
 
 app.get('/urls/new', function(request, response){
-  response.render('urls-new');
+  let pageVariables = {
+    username: request.cookies["username"]
+  };
+  response.render('urls-new', pageVariables);
 });
 
 //When /urls/:id is requested, response with page with individual url pair.
 app.get('/urls/:id', function(request, response){
-  let templateVars = { TinyURL: request.params.id, longURL: urlDatabase[request.params.id] };
+  let templateVars = {
+    TinyURL: request.params.id,
+    longURL: urlDatabase[request.params.id],
+    username: request.cookies["username"] };
+
   response.render('urls-show', templateVars);
 });
 
@@ -71,7 +81,10 @@ app.post('/urls', function(request, response){
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = request.body.longURL;
 
-  let pageVariables = { urls: urlDatabase };
+  let pageVariables = {
+    urls: urlDatabase,
+    username: request.cookies["username"]
+    };
   response.render('urls-index', pageVariables);
 
 });
