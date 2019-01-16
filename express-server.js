@@ -53,7 +53,7 @@ app.get('/urls/new', function(request, response){
 
 //When /urls/:id is requested, response with page with individual url pair.
 app.get('/urls/:id', function(request, response){
-  let templateVars = { shortURL: request.params.id, longURL: urlDatabase[request.params.id] };
+  let templateVars = { TinyURL: request.params.id, longURL: urlDatabase[request.params.id] };
   response.render('urls-show', templateVars);
 });
 

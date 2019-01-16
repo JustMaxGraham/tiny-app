@@ -15,7 +15,7 @@
       <% for (tinyURL in urls) { let actionPath = `/urls/${tinyURL}/delete`%>
 
             <form method="POST" action= <%= actionPath %>>
-              <li><a href="urls/<%=tinyURL %>"><%=tinyURL %></a> --> <%= urls[tinyURL] %>
+              <li> <%= tinyURL %> --> <%= urls[tinyURL] %> <a href="urls/<%=tinyURL %>"> Edit </a>
               <input  style="display: inline;" type="submit" value="Delete">
               </li>
             </form>
@@ -28,3 +28,4 @@
   </body>
 
 </html>
+
