@@ -99,7 +99,11 @@ app.post('/login', function(request, response){
   response.cookie('username', request.body.username);
   //console.log(request.cookies);
   response.redirect('/urls');
+});
 
+app.post('/logout', function(request, response){
+  response.clearCookie('username');
+  response.redirect('/urls');
 });
 
 

@@ -3,10 +3,17 @@
 <title>TinyApp</title>
 
 <div>
+  <% if (username == null) {%>
+    <form method="POST" action="/login">
+        <input id="username" type="text" name="username" placeholder="username" style="width: 300px">
+        <input type="submit" value="Login">
+    </form>
+  <% } else { %>
 
-  <form method="POST" action="/login">
-      <input id="username" type="text" name="username" placeholder="username" style="width: 300px">
-      <input type="submit" value="Login"> <%=username%>
-  </form>
+    <form method="POST" action="/logout">
+         <%=username%> <input type="submit" value="Logout">
+    </form>
+
+  <% } %>
 
 </div>
