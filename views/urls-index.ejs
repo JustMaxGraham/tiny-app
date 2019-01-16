@@ -12,12 +12,18 @@
     </header>
 
     <ul>
-      <% for (url in urls) { %>
-          <li><%= url %> - <%= urls[url] %></li>
+      <% for (tinyURL in urls) { let actionPath = `/urls/${tinyURL}/delete`%>
+
+            <form method="POST" action= <%= actionPath %>>
+              <li><%= tinyURL %> --> <%= urls[tinyURL] %>
+              <input  style="display: inline;" type="submit" value="Delete">
+              </li>
+            </form>
+
       <% }; %>
     </ul>
 
-    <a href="#">Click here to create a new TinyLink</a>
+    <a href="/urls/new">New TinyLink</a>
 
   </body>
 

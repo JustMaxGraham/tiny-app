@@ -11,7 +11,15 @@
       <% include ./partials/_header %>
     </header>
 
-    <a> ShortURL: <%=shortURL%> & FullURL:  <%=longURL%></a>
+    <a> ShortURL: <%=shortURL%> & FullURL:  <%=longURL%>
+
+      <form method="POST" action= '/urls/:id'>
+        <label for="editURL">Edit URL</label>
+        <input id="editURL" type="text" name="editURL" placeholder="http://" style="width: 300px">
+        <input type="submit" value="Update URL">
+      </form>
+
+    </a>
 
   </body>
 
