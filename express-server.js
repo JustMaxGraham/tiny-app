@@ -57,11 +57,9 @@ app.get('/urls/:id', function(request, response){
   response.render('urls-show', templateVars);
 });
 
-app.post('/urls/:id', function(request, resonse){
-  console.log(request.params.id);
+app.post('/urls/:id', function(request, response){
   urlDatabase[request.params.id] = request.body.editURL;
-
-  resonse.render('/urls');
+  response.redirect('/urls');
 });
 
 //Create a new tiny url for given long url.
