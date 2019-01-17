@@ -27,6 +27,20 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+let usersDB = {
+
+  "123": {
+    id: "123",
+    email: "user1@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "456": {
+    id: "456",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 // When root page is requested, send the page.
 app.get('/', function(require, response){
   response.send("Hello!");
@@ -95,9 +109,7 @@ app.post('/urls/:tinyUrl/delete', function(request, response){
 });
 
 app.post('/login', function(request, response){
-  //console.log(request.body.username);
   response.cookie('username', request.body.username);
-  //console.log(request.cookies);
   response.redirect('/urls');
 });
 
@@ -110,6 +122,44 @@ app.post('/logout', function(request, response){
 app.get("/u/:shortURL", (request, response) => {
   let longURL = urlDatabase[request.params.shortURL];
   response.redirect(longURL);
+});
+
+app.get('/register', (request, response) => {
+  let pageVariables = {
+    urls: urlDatabase,
+    username: request.cookies["username"]
+    };
+
+  response.render('urls-register', pageVariables);
+});
+
+app.post('/register', (request, response) => {
+
+  let newUserID = generateRandomString();
+  let newUserEmail = request.body.email;
+  let newUserPassword = request.body.password;
+
+  if (newUserID === '' || newUserEmail === '') {
+    response.status(400).send("Fields blank.");
+    return;
+  }
+
+  for (let user in usersDB){
+    if (usersDB[user].email === newUserEmail){
+      response.status(400).send("Email already registered");
+      return;
+    }
+  }
+
+  usersDB[newUserID] = { id: '' , email: '', password: ''};
+  usersDB[newUserID].id = newUserID;
+  usersDB[newUserID].email = newUserEmail;
+  usersDB[newUserID].password = newUserPassword;
+  console.log(usersDB);
+
+  response.cookie('user_id', newUserID);
+  response.redirect('/urls');
+
 });
 
 app.listen(PORT, function(){
