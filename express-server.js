@@ -51,15 +51,13 @@ let usersDB = {
   "123": {
     id: "123",
     email: "user1@example.com",
-    password: "purple-monkey-dinosaur",
-    hashedPassword: ""
+    hashedPassword: "$2b$10$kvqtPioPSopGPMiLQeDoL.KWgEFPOhdsLNFGg529iX0Dp9meZSX2y"
   },
 
   "456": {
     id: "456",
     email: "user2@example.com",
-    password: "dishwasher-funk",
-    hashedPassword: ""
+    hashedPassword: "$2b$10$7HcAva1n9RAGUYUfJduWzeiJVjSX2QCyhAVXP4mWE/Y1KtI08aJQq"
   }
 };
 
@@ -250,7 +248,7 @@ app.post('/register', (request, response) => {
     }
   }
 
-  usersDB[newUserID] = { id: '' , email: '', password: ''};
+  usersDB[newUserID] = { id: '' , email: '', hashedPassword: ''};
   usersDB[newUserID].id = newUserID;
   usersDB[newUserID].email = newUserEmail;
   usersDB[newUserID].hashedPassword = hashedPassword;
