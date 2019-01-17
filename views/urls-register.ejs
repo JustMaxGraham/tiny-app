@@ -7,15 +7,15 @@
 
   <body>
 
-    <header>
-      <% include ./partials/_header %>
-    </header>
+      <header>
+        <% include ./partials/_header %>
+      </header>
 
-    <form method="POST" action= <%= `/register` %>>
-      <input id="email" type="text" name="email" placeholder="Email" style="width: 300px">
-      <input id="password" type="text" name="password" placeholder="Password" style="width: 300px">
-      <input type="submit" value="Register">
-    </form>
+      <form method="POST" action= <%= `/register` %>>
+        <input id="email" type="text" name="email" placeholder="Email" style="width: 300px">
+        <input id="password" type="text" name="password" placeholder="Password" style="width: 300px">
+        <input type="submit" value="Register">
+      </form>
 
   </body>
 

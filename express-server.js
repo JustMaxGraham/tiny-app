@@ -34,7 +34,8 @@ let usersDB = {
     email: "user1@example.com",
     password: "purple-monkey-dinosaur"
   },
- "456": {
+
+  "456": {
     id: "456",
     email: "user2@example.com",
     password: "dishwasher-funk"
@@ -43,7 +44,12 @@ let usersDB = {
 
 // When root page is requested, send the page.
 app.get('/', function(require, response){
-  response.send("Hello!");
+
+  if(request.cookies.user_id !== undefined){
+    redirect('/urls');
+  } else {
+    response.redirect('/register');
+  }
 
 });
 
@@ -59,28 +65,52 @@ app.get('/hello', function(request, response){
 
 //When /urls is requested, send 'urls-index' page, with data
 app.get('/urls', function(request, response){
+
+  if (request.cookies.user_id === undefined){
+    response.redirect('/register');
+    return;
+  }
+
   let pageVariables = {
     urls: urlDatabase,
-    username: request.cookies["username"]
+    user: usersDB[request.cookies.user_id]
   };
+
   response.render('urls-index', pageVariables);
+
 });
 
 app.get('/urls/new', function(request, response){
+
+  if (request.cookies.user_id === undefined){
+    response.redirect('/register');
+    return;
+  }
+
   let pageVariables = {
-    username: request.cookies["username"]
+    user: usersDB[request.cookies.user_id]
   };
+
   response.render('urls-new', pageVariables);
+
 });
 
 //When /urls/:id is requested, response with page with individual url pair.
 app.get('/urls/:id', function(request, response){
+
+  if (request.cookies.user_id === undefined){
+    response.redirect('/register');
+    return;
+  }
+
   let templateVars = {
     TinyURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-    username: request.cookies["username"] };
+    user: usersDB[request.cookies.user_id]
+  };
 
   response.render('urls-show', templateVars);
+
 });
 
 app.post('/urls/:id', function(request, response){
@@ -97,7 +127,7 @@ app.post('/urls', function(request, response){
 
   let pageVariables = {
     urls: urlDatabase,
-    username: request.cookies["username"]
+    user: usersDB[request.cookies.user_id]
     };
   response.render('urls-index', pageVariables);
 
@@ -109,28 +139,46 @@ app.post('/urls/:tinyUrl/delete', function(request, response){
 });
 
 app.post('/login', function(request, response){
-  response.cookie('username', request.body.username);
-  response.redirect('/urls');
+
+  for (let user in usersDB){
+    if (usersDB[user].email === request.body.email){
+      response.cookie('user_id', usersDB[user].id);
+      response.redirect('/urls');
+      return;
+      }
+    }
+
+    response.redirect('/register');
+
 });
 
 app.post('/logout', function(request, response){
-  response.clearCookie('username');
-  response.redirect('/urls');
+  response.clearCookie('user_id');
+  response.redirect('/register');
 });
 
 
 app.get("/u/:shortURL", (request, response) => {
+
+  if (request.cookies.user_id === undefined){
+    response.redirect('/register');
+    return;
+  }
+
   let longURL = urlDatabase[request.params.shortURL];
   response.redirect(longURL);
+
 });
 
 app.get('/register', (request, response) => {
+
   let pageVariables = {
     urls: urlDatabase,
-    username: request.cookies["username"]
+    user: usersDB[request.cookies.user_id]
     };
 
   response.render('urls-register', pageVariables);
+
 });
 
 app.post('/register', (request, response) => {
