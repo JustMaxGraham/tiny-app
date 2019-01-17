@@ -152,6 +152,17 @@ app.post('/login', function(request, response){
 
 });
 
+app.get('/login', (request, response) => {
+
+  let pageVariables = {
+    urls: urlDatabase,
+    user: usersDB[request.cookies.user_id]
+    };
+
+  response.render('urls-login', pageVariables);
+
+});
+
 app.post('/logout', function(request, response){
   response.clearCookie('user_id');
   response.redirect('/register');
