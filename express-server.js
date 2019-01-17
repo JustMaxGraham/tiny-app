@@ -213,7 +213,7 @@ app.get("/u/:shortURL", (request, response) => {
     return;
   }
 
-  let longURL = urlDatabase[request.params.shortURL];
+  let longURL = urlDatabase[request.params.shortURL].longURL;
   response.redirect(longURL);
 
 });
