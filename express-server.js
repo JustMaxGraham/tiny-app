@@ -27,6 +27,7 @@ const app = express();
 const PORT = 8080; //default post 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -50,13 +51,15 @@ let usersDB = {
   "123": {
     id: "123",
     email: "user1@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "purple-monkey-dinosaur",
+    hashedPassword: ""
   },
 
   "456": {
     id: "456",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "dishwasher-funk",
+    hashedPassword: ""
   }
 };
 
@@ -173,7 +176,7 @@ app.post('/login', function(request, response){
 
   for (let user in usersDB){
     if (usersDB[user].email === request.body.email){
-      if (usersDB[user].password === request.body.password){
+      if (bcrypt.compareSync(request.body.password, usersDB[user].hashedPassword)){
         response.cookie('user_id', usersDB[user].id);
         response.redirect('/urls');
         return;
@@ -233,7 +236,7 @@ app.post('/register', (request, response) => {
 
   let newUserID = generateRandomString();
   let newUserEmail = request.body.email;
-  let newUserPassword = request.body.password;
+  let hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
   if (newUserID === '' || newUserEmail === '') {
     response.status(400).send("Fields blank.");
@@ -250,7 +253,7 @@ app.post('/register', (request, response) => {
   usersDB[newUserID] = { id: '' , email: '', password: ''};
   usersDB[newUserID].id = newUserID;
   usersDB[newUserID].email = newUserEmail;
-  usersDB[newUserID].password = newUserPassword;
+  usersDB[newUserID].hashedPassword = hashedPassword;
   console.log(usersDB);
 
   response.cookie('user_id', newUserID);
