@@ -10,6 +10,16 @@ function generateRandomString() {
   return (randomString);
 }
 
+function urlsForUser(id){
+  let filteredDB = {};
+  for (let tinyURL in urlDatabase) {
+    if(urlDatabase[tinyURL].userID === id) {
+      filteredDB[tinyURL] = urlDatabase[tinyURL];
+    }
+  }
+  return filteredDB;
+};
+
 //generateRandomString();
 
 const express = require("express");
@@ -80,7 +90,7 @@ app.get('/urls', function(request, response){
   }
 
   let pageVariables = {
-    urls: urlDatabase,
+    urls: urlsForUser(request.cookies.user_id),
     user: usersDB[request.cookies.user_id]
   };
 
@@ -144,8 +154,10 @@ app.post('/urls', function(request, response){
   urlDatabase[newShortURL].longURL = request.body.longURL;
   urlDatabase[newShortURL].userID = request.cookies.user_id;
 
+  //console.log(urlsForUser(cookies.user_id));
   let pageVariables = {
-    urls: urlDatabase,
+    //urls: urlDatabase,
+    urls: urlsForUser(request.cookies.user_id),
     user: usersDB[request.cookies.user_id]
     };
   response.render('urls-index', pageVariables);
@@ -154,8 +166,6 @@ app.post('/urls', function(request, response){
 
 app.post('/urls/:tinyUrl/delete', function(request, response){
   delete urlDatabase[request.params.tinyUrl];
-  console.log(request.params.tinyUrl);
-  console.log(urlDatabase[request.params.tinyUrl]);
   response.redirect('/urls');
 });
 
