@@ -12,16 +12,20 @@
     </header>
 
     <ul>
-      <% for (tinyURL in urls) { let actionPath = `/urls/${tinyURL}/delete`%>
+      <%
+        for (var tinyURL in urls) {
+        let actionPath = `/urls/${tinyURL}/delete`;
+        if(urls[tinyURL].userID === user.id){ %>
 
             <form method="POST" action= <%= actionPath %>>
               <li>
-                <%= tinyURL %> --> <%= urls[tinyURL] %> <a href="urls/<%=tinyURL %>"> Edit </a>
+                <%= tinyURL %> --> <%= urls[tinyURL].longURL %>
+                <a href="urls/<%= tinyURL %>"> Edit </a>
                 <input  style="display: inline;" type="submit" value="Delete">
               </li>
             </form>
 
-      <% }; %>
+      <% } }; %>
     </ul>
 
     <a href="/urls/new">New TinyLink</a>

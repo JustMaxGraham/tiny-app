@@ -14,7 +14,7 @@
     <div> TinyURL: <%=TinyURL%>
 
       <form method="POST" action= <%= `/urls/${TinyURL}` %>>
-        <input id="editURL" type="text" name="editURL" placeholder=<%=longURL%> style="width: 300px">
+        <input id="editURL" type="text" name="editURL" placeholder= <%=urls[TinyURL].longURL%> style="width: 300px">
         <input type="submit" value="Update URL">
       </form>
 

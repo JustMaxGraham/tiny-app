@@ -23,8 +23,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
 let urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "123"
+  },
+
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "456"
+  }
 };
 
 let usersDB = {
@@ -48,7 +56,7 @@ app.get('/', function(require, response){
   if(request.cookies.user_id !== undefined){
     redirect('/urls');
   } else {
-    response.redirect('/register');
+    response.redirect('/login');
   }
 
 });
@@ -67,7 +75,7 @@ app.get('/hello', function(request, response){
 app.get('/urls', function(request, response){
 
   if (request.cookies.user_id === undefined){
-    response.redirect('/register');
+    response.redirect('/login');
     return;
   }
 
@@ -83,7 +91,7 @@ app.get('/urls', function(request, response){
 app.get('/urls/new', function(request, response){
 
   if (request.cookies.user_id === undefined){
-    response.redirect('/register');
+    response.redirect('/login');
     return;
   }
 
@@ -99,22 +107,27 @@ app.get('/urls/new', function(request, response){
 app.get('/urls/:id', function(request, response){
 
   if (request.cookies.user_id === undefined){
-    response.redirect('/register');
+    response.redirect('/login');
     return;
   }
 
-  let templateVars = {
+  // let templateVars = {
+  //   TinyURL: request.params.id,
+  //   longURL: urlDatabase[request.params.id],
+  //   user: usersDB[request.cookies.user_id]
+  // };
+  let pageVariables = {
     TinyURL: request.params.id,
-    longURL: urlDatabase[request.params.id],
+    urls: urlDatabase,
     user: usersDB[request.cookies.user_id]
-  };
+    };
 
-  response.render('urls-show', templateVars);
+  response.render('urls-show', pageVariables);
 
 });
 
 app.post('/urls/:id', function(request, response){
-  urlDatabase[request.params.id] = request.body.editURL;
+  urlDatabase[request.params.id].longURL = request.body.editURL;
   response.redirect('/urls');
 });
 
@@ -123,7 +136,13 @@ app.post('/urls/:id', function(request, response){
 app.post('/urls', function(request, response){
 
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = request.body.longURL;
+  urlDatabase[newShortURL] = {
+    longURL: "",
+    userID: ""
+  };
+
+  urlDatabase[newShortURL].longURL = request.body.longURL;
+  urlDatabase[newShortURL].userID = request.cookies.user_id;
 
   let pageVariables = {
     urls: urlDatabase,
@@ -135,6 +154,8 @@ app.post('/urls', function(request, response){
 
 app.post('/urls/:tinyUrl/delete', function(request, response){
   delete urlDatabase[request.params.tinyUrl];
+  console.log(request.params.tinyUrl);
+  console.log(urlDatabase[request.params.tinyUrl]);
   response.redirect('/urls');
 });
 
