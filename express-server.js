@@ -142,13 +142,19 @@ app.post('/login', function(request, response){
 
   for (let user in usersDB){
     if (usersDB[user].email === request.body.email){
-      response.cookie('user_id', usersDB[user].id);
-      response.redirect('/urls');
-      return;
+      if (usersDB[user].password === request.body.password){
+        response.cookie('user_id', usersDB[user].id);
+        response.redirect('/urls');
+        return;
+      } else {
+        response.status(403).send("Wrong Password");
+        return;
       }
     }
+  }
 
-    response.redirect('/register');
+    response.status(403).send("Email not found.");
+    //response.redirect('/register');
 
 });
 
@@ -165,7 +171,7 @@ app.get('/login', (request, response) => {
 
 app.post('/logout', function(request, response){
   response.clearCookie('user_id');
-  response.redirect('/register');
+  response.redirect('/login');
 });
 
 
