@@ -6,13 +6,13 @@
 
   <% if (!user) { %>
 
-  <a href="/login">Login</a> <a href="/register">Register</a>
+    <a href="/login">Login</a> <a href="/register">Register</a>
 
 
   <% } else { %>
 
     <form method="POST" action="/logout">
-         <div><%=user.id%> <input type="submit" style="display: inline;" value="Logout"></div>
+         <div><%=user.email%> <input type="submit" style="display: inline;" value="Logout"></div>
     </form>
 
   <% } %>

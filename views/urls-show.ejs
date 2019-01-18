@@ -5,20 +5,19 @@
       <title>TinyApp</title>
   </head>
 
-  <body>
+  <body style= "padding:25px;">
 
     <header>
       <% include ./partials/_header %>
     </header>
 
-    <div> TinyURL: <%=TinyURL%>
+    <h1> TinyURL: <%=TinyURL%> </h1>
+    <h3>Enter a new URL starting with http:// </h3>
 
       <form method="POST" action= <%= `/urls/${TinyURL}` %>>
         <input id="editURL" type="text" name="editURL" placeholder= <%=urls[TinyURL].longURL%> style="width: 300px">
         <input type="submit" value="Update URL">
       </form>
-
-    </div>
 
   </body>
 
