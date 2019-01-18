@@ -4,6 +4,13 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
+![Screenshot of Login](https://github.com/MaxHuw/tiny-app/blob/test/stretch/docs/login.png)
+
+![Screenshot of users current TinyURLs](https://github.com/MaxHuw/tiny-app/blob/test/stretch/docs/ulrsList.png)
+
+![Screenshot of individual TinyURL's information](https://github.com/MaxHuw/tiny-app/blob/test/stretch/docs/TinyURLEdit.png)
+
+
 ## Dependencies
 
     "bcrypt": "2.0.0",
