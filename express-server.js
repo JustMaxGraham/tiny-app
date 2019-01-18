@@ -26,7 +26,6 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default post 8080
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
@@ -67,10 +66,10 @@ let usersDB = {
 };
 
 // When root page is requested, send the page.
-app.get('/', function(require, response){
+app.get('/', function(request, response){
 
   if(request.session.user_id !== undefined){
-    redirect('/urls');
+    response.redirect('/urls');
   } else {
     response.redirect('/login');
   }
@@ -166,7 +165,8 @@ app.post('/urls', function(request, response){
     urls: urlsForUser(request.session.user_id),
     user: usersDB[request.session.user_id]
     };
-  response.render('urls-index', pageVariables);
+
+  response.redirect('/urls');
 
 });
 
