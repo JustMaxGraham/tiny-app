@@ -34,6 +34,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 const validURL = require('valid-url');
+const methodOverride = require('method-override');
 
 app.use(cookieSession({
   name: 'session',
@@ -41,6 +42,8 @@ app.use(cookieSession({
 }));
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride('_method'));
+
 
 app.set('view engine', 'ejs');
 
@@ -190,7 +193,6 @@ app.get("/u/:tinyURL", (request, response) => {
     return;
   }
 
-
 });
 
 app.get('/register', (request, response) => {
@@ -215,7 +217,7 @@ app.get('/register', (request, response) => {
 Post Requests
 **************************/
 
-app.post('/urls', (request, response) => {
+app.put('/urls', (request, response) => {
 
   if (request.session.user_id === undefined){
     response.status(403).send("Must be logged in to access.");
@@ -243,7 +245,7 @@ app.post('/urls', (request, response) => {
 
 });
 
-app.post('/urls/:id', (request, response) => {
+app.put('/urls/:id', (request, response) => {
 
   if (request.session.user_id === undefined){
     response.status(403).send("Must be logged in to access.");
@@ -260,7 +262,7 @@ app.post('/urls/:id', (request, response) => {
 
 });
 
-app.post('/urls/:tinyURL/delete', (request, response) => {
+app.delete('/urls/:tinyURL/delete', (request, response) => {
 
   if (request.session.user_id === undefined){
     response.status(403).send("Must be logged in to access.");
@@ -277,7 +279,7 @@ app.post('/urls/:tinyURL/delete', (request, response) => {
 
 });
 
-app.post('/login', (request, response) => {
+app.put('/login', (request, response) => {
 
   for (let user in usersDB){
     if (usersDB[user].email === request.body.email){
@@ -296,13 +298,13 @@ app.post('/login', (request, response) => {
 
 });
 
-app.post('/logout', (request, response) => {
+app.put('/logout', (request, response) => {
   request.session = null;
   response.redirect('/login');
 });
 
 
-app.post('/register', (request, response) => {
+app.put('/register', (request, response) => {
 
   let newUserID = generateRandomString();
   let newUserEmail = request.body.email;

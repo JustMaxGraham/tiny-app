@@ -11,7 +11,7 @@
 
   <% } else { %>
 
-    <form method="POST" action="/logout">
+    <form method="POST" action="/logout?_method=PUT">
          <div><%=user.email%> <input type="submit" style="display: inline;" value="Logout"></div>
     </form>
 

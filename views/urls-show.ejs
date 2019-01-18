@@ -14,9 +14,9 @@
     <h1> TinyURL: <%=TinyURL%> </h1>
     <p>Date Created: <%= urls[TinyURL].dateCreated%></p>
     <p>Total Vistis: <%= urls[TinyURL].visits%></p>
-    <h3>Update URL below, starting with http:// </h3>
+    <h3>Update URL below:</h3>
 
-      <form method="POST" action= <%= `/urls/${TinyURL}` %>>
+      <form method="POST" action= <%= `/urls/${TinyURL}?_method=PUT` %>>
         <input id="editURL" type="text" name="editURL" placeholder= <%=urls[TinyURL].longURL%> style="width: 300px">
         <input type="submit" value="Update URL">
       </form>

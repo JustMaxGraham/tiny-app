@@ -18,9 +18,9 @@
 
         let date = (urls[tinyURL].dateCreated).substring(0, 13);
 
-          let actionPath = `/urls/${tinyURL}/delete`; %>
+          let actionPath = `/urls/${tinyURL}/delete?_method=DELETE`; %>
 
-            <form method="POST" action= <%= actionPath %>>
+            <form method="POST" action= <%= actionPath %> >
 
               <li list-style-type: none;>
                 <dir>
