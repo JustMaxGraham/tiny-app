@@ -53,13 +53,15 @@ let urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     userID: "123",
-    visits: 0
+    dateCreated: "Fri Jan 18 2019 21:19:12 GMT+0000 (UTC)",
+    visits: 12
   },
 
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "456",
-    vistis: 0
+    dateCreated: "Fri Jan 18 2019 21:19:12 GMT+0000 (UTC)",
+    visits: 99
   }
 };
 
@@ -224,15 +226,15 @@ app.post('/urls', (request, response) => {
   urlDatabase[newShortURL] = {
     longURL: "",
     userID: "",
+    dateCreated: "",
     visits: 0
   };
 
   urlDatabase[newShortURL].longURL = request.body.longURL;
   urlDatabase[newShortURL].userID = request.session.user_id;
+  urlDatabase[newShortURL].dateCreated = Date();
 
-  //console.log(urlsForUser(cookies.user_id));
   let pageVariables = {
-    //urls: urlDatabase,
     urls: urlsForUser(request.session.user_id),
     user: usersDB[request.session.user_id]
     };
@@ -322,7 +324,6 @@ app.post('/register', (request, response) => {
   usersDB[newUserID].id = newUserID;
   usersDB[newUserID].email = newUserEmail;
   usersDB[newUserID].hashedPassword = hashedPassword;
-  console.log(usersDB);
 
   request.session.user_id = newUserID;
   response.redirect('/urls');

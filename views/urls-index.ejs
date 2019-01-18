@@ -13,8 +13,10 @@
 
     <h1>Your TinyURLs</h1>
 
-    <ul style="width: 600px;">
+    <ul>
       <% for (var tinyURL in urls) {
+
+        let date = (urls[tinyURL].dateCreated).substring(0, 13);
 
           let actionPath = `/urls/${tinyURL}/delete`; %>
 
@@ -22,7 +24,7 @@
 
               <li list-style-type: none;>
                 <dir>
-                  <%= tinyURL %> -- Visits: <%= urls[tinyURL].visits %> -- <%= urls[tinyURL].longURL %>
+                  <%= tinyURL %> -- Created: <%= date %> -- Visits: <%= urls[tinyURL].visits %> -- <%= urls[tinyURL].longURL %>
                   <a href="urls/<%= tinyURL %>"> Edit </a>
                   <input  style="display: inline; float: right;" type="submit" value="Delete">
                 </dir>
