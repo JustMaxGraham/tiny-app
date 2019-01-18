@@ -46,12 +46,14 @@ let urlDatabase = {
 
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "123"
+    userID: "123",
+    visits: 0
   },
 
   "9sm5xK": {
     longURL: "http://www.google.com",
-    userID: "456"
+    userID: "456",
+    vistis: 0
   }
 };
 
@@ -163,6 +165,8 @@ app.get("/u/:shortURL", (request, response) => {
     response.redirect('/register');
     return;
   }
+
+  urlDatabase[request.params.shortURL].visits ++;
 
   let longURL = urlDatabase[request.params.shortURL].longURL;
   response.redirect(longURL);

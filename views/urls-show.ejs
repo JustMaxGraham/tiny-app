@@ -12,6 +12,7 @@
     </header>
 
     <h1> TinyURL: <%=TinyURL%> </h1>
+    <p>Total Vistis: <%= urls[TinyURL].visits%></p>
     <h3>Enter a new URL starting with http:// </h3>
 
       <form method="POST" action= <%= `/urls/${TinyURL}` %>>
