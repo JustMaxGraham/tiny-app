@@ -57,14 +57,16 @@ let urlDatabase = {
     longURL: "http://www.lighthouselabs.ca",
     userID: "123",
     dateCreated: "Fri Jan 18 2019 21:19:12 GMT+0000 (UTC)",
-    visits: 12
+    visits: 12,
+    uniqueVisits: {}
   },
 
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "456",
     dateCreated: "Fri Jan 18 2019 21:19:12 GMT+0000 (UTC)",
-    visits: 99
+    visits: 99,
+    uniqueVisits: {}
   }
 };
 
@@ -183,6 +185,12 @@ app.get("/u/:tinyURL", (request, response) => {
 
   urlDatabase[request.params.tinyURL].visits ++;
 
+  let visitorID = generateRandomString();
+
+  request.session.visitor_id = visitorID;
+
+  urlDatabase[request.params.tinyURL].uniqueVisits[visitorID] = Date();
+
   let longURL = urlDatabase[request.params.tinyURL].longURL;
 
   if (validURL.isWebUri(longURL)){
@@ -229,7 +237,8 @@ app.put('/urls', (request, response) => {
     longURL: "",
     userID: "",
     dateCreated: "",
-    visits: 0
+    visits: 0,
+    uniqueVisits: {}
   };
 
   urlDatabase[newShortURL].longURL = request.body.longURL;

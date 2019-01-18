@@ -14,6 +14,8 @@
     <h1> TinyURL: <%=TinyURL%> </h1>
     <p>Date Created: <%= urls[TinyURL].dateCreated%></p>
     <p>Total Vistis: <%= urls[TinyURL].visits%></p>
+    <p>Total Unique Vistis: <%= Object.keys(urls[TinyURL].uniqueVisits).length%></p>
+
     <h3>Update URL below:</h3>
 
       <form method="POST" action= <%= `/urls/${TinyURL}?_method=PUT` %>>
@@ -21,9 +23,20 @@
         <input type="submit" value="Update URL">
       </form>
 
-      <div style="margin-top: 20px;">
+      <div style="margin-top: 20px; margin-bottom: 20px">
         <a href="/urls">Back to your URLs</a>
       </div>
+
+      <h3>List of unique visits:</h3>
+      <% for (uniqueVisit in urls[TinyURL].uniqueVisits) {%>
+
+        <li list-style-type: none;>
+
+            <%= uniqueVisit %> -- <%= urls[TinyURL].uniqueVisits[uniqueVisit]  %>
+
+        </li>
+
+      <% } %>
 
   </body>
 
