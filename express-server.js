@@ -138,10 +138,16 @@ app.get('/urls/:id', (request, response) => {
     return;
   }
 
+  if (!urlDatabase[request.params.id]){
+    response.status(403).send("This TinyURL does not exist. Check that you entered it correctly.");
+    return;
+  }
+
   if (urlDatabase[request.params.id].userID !== request.session.user_id){
    response.status(403).send("You do not have access to this TinyURL.");
    return;
   }
+
 
   let pageVariables = {
     TinyURL: request.params.id,
@@ -155,6 +161,12 @@ app.get('/urls/:id', (request, response) => {
 
 app.get('/login', (request, response) => {
 
+  if (request.session.user_id !== undefined){
+    response.redirect('/urls');
+    return;
+  }
+
+
   let pageVariables = {
     urls: urlDatabase,
     user: usersDB[request.session.user_id]
@@ -164,21 +176,27 @@ app.get('/login', (request, response) => {
 
 });
 
-app.get("/u/:shortURL", (request, response) => {
+app.get("/u/:tinyURL", (request, response) => {
 
-  if (request.session.user_id === undefined){
-    response.redirect('/register');
+  if (!urlDatabase[request.params.tinyURL]){
+    response.status(404).send("Not a valid TinyURL. Please check that you entered it correctly.");
     return;
   }
 
-  urlDatabase[request.params.shortURL].visits ++;
+  urlDatabase[request.params.tinyURL].visits ++;
 
-  let longURL = urlDatabase[request.params.shortURL].longURL;
+  let longURL = urlDatabase[request.params.tinyURL].longURL;
   response.redirect(longURL);
 
 });
 
 app.get('/register', (request, response) => {
+
+  if (request.session.user_id !== undefined){
+    response.redirect('/urls');
+    return;
+  }
+
 
   let pageVariables = {
     urls: urlDatabase,
@@ -194,19 +212,20 @@ app.get('/register', (request, response) => {
 Post Methods
 **************************/
 
-app.post('/urls/:id', (request, response) => {
-  urlDatabase[request.params.id].longURL = request.body.editURL;
-  response.redirect('/urls');
-});
-
 //Create a new tiny url for given long url.
 //Add to database. render new page with the new pair of urls.
 app.post('/urls', (request, response) => {
 
+  if (request.session.user_id === undefined){
+    response.status(403).send("Must be logged in to access.");
+    return;
+  }
+
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = {
     longURL: "",
-    userID: ""
+    userID: "",
+    visits: 0
   };
 
   urlDatabase[newShortURL].longURL = request.body.longURL;
@@ -223,9 +242,38 @@ app.post('/urls', (request, response) => {
 
 });
 
-app.post('/urls/:tinyUrl/delete', (request, response) => {
-  delete urlDatabase[request.params.tinyUrl];
+app.post('/urls/:id', (request, response) => {
+
+  if (request.session.user_id === undefined){
+    response.status(403).send("Must be logged in to access.");
+    return;
+  }
+
+  if (urlDatabase[request.params.id].userID !== request.session.user_id){
+   response.status(403).send("You do not have access to this TinyURL.");
+   return;
+  }
+
+  urlDatabase[request.params.id].longURL = request.body.editURL;
   response.redirect('/urls');
+
+});
+
+app.post('/urls/:tinyURL/delete', (request, response) => {
+
+  if (request.session.user_id === undefined){
+    response.status(403).send("Must be logged in to access.");
+    return;
+  }
+
+  if (urlDatabase[request.params.tinyURL].userID !== request.session.user_id){
+   response.status(403).send("You do not have access to this TinyURL.");
+   return;
+  }
+
+  delete urlDatabase[request.params.tinyURL];
+  response.redirect('/urls');
+
 });
 
 app.post('/login', (request, response) => {
@@ -243,8 +291,7 @@ app.post('/login', (request, response) => {
     }
   }
 
-    response.status(403).send("Email not found.");
-    //response.redirect('/register');
+  response.status(403).send("Email not found.");
 
 });
 
