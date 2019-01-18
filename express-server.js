@@ -1,5 +1,9 @@
 // jshint esversion: 6
 
+/**************************
+Functions
+**************************/
+
 function generateRandomString() {
   let possibleChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let randomString = '';
@@ -20,8 +24,9 @@ function urlsForUser(id){
   return filteredDB;
 };
 
-//generateRandomString();
-
+/**************************
+Declarations and 'Databases'
+**************************/
 const express = require("express");
 const app = express();
 const PORT = 8080; //default post 8080
@@ -65,8 +70,13 @@ let usersDB = {
   }
 };
 
+
+/**************************
+Get Methods
+**************************/
+
 // When root page is requested, send the page.
-app.get('/', function(request, response){
+app.get('/', (request, response) => {
 
   if(request.session.user_id !== undefined){
     response.redirect('/urls');
@@ -77,17 +87,17 @@ app.get('/', function(request, response){
 });
 
 //When /urls.json  is requested, send the databse in JSON format.
-app.get('/urls.json', function(request, response){
+app.get('/urls.json', (request, response) => {
   response.json(urlDatabase);
 });
 
 //When /hello is requested, send html code of the page.
-app.get('/hello', function(request, response){
+app.get('/hello', (request, response) => {
   response.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
 //When /urls is requested, send 'urls-index' page, with data
-app.get('/urls', function(request, response){
+app.get('/urls', (request, response) => {
 
   if (request.session.user_id === undefined){
     response.redirect('/login');
@@ -103,7 +113,7 @@ app.get('/urls', function(request, response){
 
 });
 
-app.get('/urls/new', function(request, response){
+app.get('/urls/new',(request, response) => {
 
   if (request.session.user_id === undefined){
     response.redirect('/login');
@@ -119,18 +129,13 @@ app.get('/urls/new', function(request, response){
 });
 
 //When /urls/:id is requested, response with page with individual url pair.
-app.get('/urls/:id', function(request, response){
+app.get('/urls/:id', (request, response) => {
 
   if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
   }
 
-  // let templateVars = {
-  //   TinyURL: request.params.id,
-  //   longURL: urlDatabase[request.params.id],
-  //   user: usersDB[request.cookies.user_id]
-  // };
   let pageVariables = {
     TinyURL: request.params.id,
     urls: urlDatabase,
@@ -138,60 +143,6 @@ app.get('/urls/:id', function(request, response){
     };
 
   response.render('urls-show', pageVariables);
-
-});
-
-app.post('/urls/:id', function(request, response){
-  urlDatabase[request.params.id].longURL = request.body.editURL;
-  response.redirect('/urls');
-});
-
-//Create a new tiny url for given long url.
-//Add to database. render new page with the new pair of urls.
-app.post('/urls', function(request, response){
-
-  let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = {
-    longURL: "",
-    userID: ""
-  };
-
-  urlDatabase[newShortURL].longURL = request.body.longURL;
-  urlDatabase[newShortURL].userID = request.session.user_id;
-
-  //console.log(urlsForUser(cookies.user_id));
-  let pageVariables = {
-    //urls: urlDatabase,
-    urls: urlsForUser(request.session.user_id),
-    user: usersDB[request.session.user_id]
-    };
-
-  response.redirect('/urls');
-
-});
-
-app.post('/urls/:tinyUrl/delete', function(request, response){
-  delete urlDatabase[request.params.tinyUrl];
-  response.redirect('/urls');
-});
-
-app.post('/login', function(request, response){
-
-  for (let user in usersDB){
-    if (usersDB[user].email === request.body.email){
-      if (bcrypt.compareSync(request.body.password, usersDB[user].hashedPassword)){
-        request.session.user_id = usersDB[user].id;
-        response.redirect('/urls');
-        return;
-      } else {
-        response.status(403).send("Wrong Password");
-        return;
-      }
-    }
-  }
-
-    response.status(403).send("Email not found.");
-    //response.redirect('/register');
 
 });
 
@@ -205,12 +156,6 @@ app.get('/login', (request, response) => {
   response.render('urls-login', pageVariables);
 
 });
-
-app.post('/logout', function(request, response){
-  request.session = null;
-  response.redirect('/login');
-});
-
 
 app.get("/u/:shortURL", (request, response) => {
 
@@ -234,6 +179,71 @@ app.get('/register', (request, response) => {
   response.render('urls-register', pageVariables);
 
 });
+
+
+/**************************
+Post Methods
+**************************/
+
+app.post('/urls/:id', (request, response) => {
+  urlDatabase[request.params.id].longURL = request.body.editURL;
+  response.redirect('/urls');
+});
+
+//Create a new tiny url for given long url.
+//Add to database. render new page with the new pair of urls.
+app.post('/urls', (request, response) => {
+
+  let newShortURL = generateRandomString();
+  urlDatabase[newShortURL] = {
+    longURL: "",
+    userID: ""
+  };
+
+  urlDatabase[newShortURL].longURL = request.body.longURL;
+  urlDatabase[newShortURL].userID = request.session.user_id;
+
+  //console.log(urlsForUser(cookies.user_id));
+  let pageVariables = {
+    //urls: urlDatabase,
+    urls: urlsForUser(request.session.user_id),
+    user: usersDB[request.session.user_id]
+    };
+
+  response.redirect('/urls');
+
+});
+
+app.post('/urls/:tinyUrl/delete', (request, response) => {
+  delete urlDatabase[request.params.tinyUrl];
+  response.redirect('/urls');
+});
+
+app.post('/login', (request, response) => {
+
+  for (let user in usersDB){
+    if (usersDB[user].email === request.body.email){
+      if (bcrypt.compareSync(request.body.password, usersDB[user].hashedPassword)){
+        request.session.user_id = usersDB[user].id;
+        response.redirect('/urls');
+        return;
+      } else {
+        response.status(403).send("Wrong Password");
+        return;
+      }
+    }
+  }
+
+    response.status(403).send("Email not found.");
+    //response.redirect('/register');
+
+});
+
+app.post('/logout', (request, response) => {
+  request.session = null;
+  response.redirect('/login');
+});
+
 
 app.post('/register', (request, response) => {
 
@@ -264,6 +274,12 @@ app.post('/register', (request, response) => {
 
 });
 
+/**************************
+Listen Methods
+**************************/
+
+
 app.listen(PORT, function(){
   console.log(`Example app listening on port ${PORT}`);
 });
+
