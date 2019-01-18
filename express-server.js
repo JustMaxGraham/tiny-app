@@ -33,6 +33,7 @@ const PORT = 8080; //default post 8080
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
+const validURL = require('valid-url');
 
 app.use(cookieSession({
   name: 'session',
@@ -40,7 +41,12 @@ app.use(cookieSession({
 }));
 
 app.use(bodyParser.urlencoded({extended: true}));
+
 app.set('view engine', 'ejs');
+
+app.listen(PORT, function(){
+  console.log(`Listening on port ${PORT}`);
+});
 
 let urlDatabase = {
 
@@ -74,10 +80,9 @@ let usersDB = {
 
 
 /**************************
-Get Methods
+Get Requests
 **************************/
 
-// When root page is requested, send the page.
 app.get('/', (request, response) => {
 
   if(request.session.user_id !== undefined){
@@ -88,17 +93,6 @@ app.get('/', (request, response) => {
 
 });
 
-//When /urls.json  is requested, send the databse in JSON format.
-app.get('/urls.json', (request, response) => {
-  response.json(urlDatabase);
-});
-
-//When /hello is requested, send html code of the page.
-app.get('/hello', (request, response) => {
-  response.send('<html><body>Hello <b>World</b></body></html>\n');
-});
-
-//When /urls is requested, send 'urls-index' page, with data
 app.get('/urls', (request, response) => {
 
   if (request.session.user_id === undefined){
@@ -130,7 +124,6 @@ app.get('/urls/new',(request, response) => {
 
 });
 
-//When /urls/:id is requested, response with page with individual url pair.
 app.get('/urls/:id', (request, response) => {
 
   if (request.session.user_id === undefined){
@@ -179,14 +172,22 @@ app.get('/login', (request, response) => {
 app.get("/u/:tinyURL", (request, response) => {
 
   if (!urlDatabase[request.params.tinyURL]){
-    response.status(404).send("Not a valid TinyURL. Please check that you entered it correctly.");
+    response.status(404).send("Not a valid TinyURL. Please check that you entered it correctly. test test");
     return;
   }
 
   urlDatabase[request.params.tinyURL].visits ++;
 
   let longURL = urlDatabase[request.params.tinyURL].longURL;
-  response.redirect(longURL);
+
+  if (validURL.isWebUri(longURL)){
+    response.redirect(longURL);
+    return;
+  } else {
+    response.redirect('http://' + longURL);
+    return;
+  }
+
 
 });
 
@@ -209,11 +210,9 @@ app.get('/register', (request, response) => {
 
 
 /**************************
-Post Methods
+Post Requests
 **************************/
 
-//Create a new tiny url for given long url.
-//Add to database. render new page with the new pair of urls.
 app.post('/urls', (request, response) => {
 
   if (request.session.user_id === undefined){
@@ -328,14 +327,5 @@ app.post('/register', (request, response) => {
   request.session.user_id = newUserID;
   response.redirect('/urls');
 
-});
-
-/**************************
-Listen Methods
-**************************/
-
-
-app.listen(PORT, function(){
-  console.log(`Example app listening on port ${PORT}`);
 });
 
