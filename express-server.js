@@ -138,6 +138,11 @@ app.get('/urls/:id', (request, response) => {
     return;
   }
 
+  if (urlDatabase[request.params.id].userID !== request.session.user_id){
+   response.status(403).send("You do not have access to this TinyURL.");
+   return;
+  }
+
   let pageVariables = {
     TinyURL: request.params.id,
     urls: urlDatabase,

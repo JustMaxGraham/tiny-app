@@ -22,7 +22,7 @@
 
               <li list-style-type: none;>
                 <dir>
-                  <%= tinyURL %> --> <%= urls[tinyURL].longURL %>
+                  <%= tinyURL %> -- Visits: <%= urls[tinyURL].visits %> -- <%= urls[tinyURL].longURL %>
                   <a href="urls/<%= tinyURL %>"> Edit </a>
                   <input  style="display: inline; float: right;" type="submit" value="Delete">
                 </dir>
