@@ -28,8 +28,13 @@ const PORT = 8080; //default post 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session');
 
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1']
+}));
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
@@ -64,7 +69,7 @@ let usersDB = {
 // When root page is requested, send the page.
 app.get('/', function(require, response){
 
-  if(request.cookies.user_id !== undefined){
+  if(request.session.user_id !== undefined){
     redirect('/urls');
   } else {
     response.redirect('/login');
@@ -85,14 +90,14 @@ app.get('/hello', function(request, response){
 //When /urls is requested, send 'urls-index' page, with data
 app.get('/urls', function(request, response){
 
-  if (request.cookies.user_id === undefined){
+  if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
   }
 
   let pageVariables = {
-    urls: urlsForUser(request.cookies.user_id),
-    user: usersDB[request.cookies.user_id]
+    urls: urlsForUser(request.session.user_id),
+    user: usersDB[request.session.user_id]
   };
 
   response.render('urls-index', pageVariables);
@@ -101,13 +106,13 @@ app.get('/urls', function(request, response){
 
 app.get('/urls/new', function(request, response){
 
-  if (request.cookies.user_id === undefined){
+  if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
   }
 
   let pageVariables = {
-    user: usersDB[request.cookies.user_id]
+    user: usersDB[request.session.user_id]
   };
 
   response.render('urls-new', pageVariables);
@@ -117,7 +122,7 @@ app.get('/urls/new', function(request, response){
 //When /urls/:id is requested, response with page with individual url pair.
 app.get('/urls/:id', function(request, response){
 
-  if (request.cookies.user_id === undefined){
+  if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
   }
@@ -130,7 +135,7 @@ app.get('/urls/:id', function(request, response){
   let pageVariables = {
     TinyURL: request.params.id,
     urls: urlDatabase,
-    user: usersDB[request.cookies.user_id]
+    user: usersDB[request.session.user_id]
     };
 
   response.render('urls-show', pageVariables);
@@ -153,13 +158,13 @@ app.post('/urls', function(request, response){
   };
 
   urlDatabase[newShortURL].longURL = request.body.longURL;
-  urlDatabase[newShortURL].userID = request.cookies.user_id;
+  urlDatabase[newShortURL].userID = request.session.user_id;
 
   //console.log(urlsForUser(cookies.user_id));
   let pageVariables = {
     //urls: urlDatabase,
-    urls: urlsForUser(request.cookies.user_id),
-    user: usersDB[request.cookies.user_id]
+    urls: urlsForUser(request.session.user_id),
+    user: usersDB[request.session.user_id]
     };
   response.render('urls-index', pageVariables);
 
@@ -175,7 +180,7 @@ app.post('/login', function(request, response){
   for (let user in usersDB){
     if (usersDB[user].email === request.body.email){
       if (bcrypt.compareSync(request.body.password, usersDB[user].hashedPassword)){
-        response.cookie('user_id', usersDB[user].id);
+        request.session.user_id = usersDB[user].id;
         response.redirect('/urls');
         return;
       } else {
@@ -194,7 +199,7 @@ app.get('/login', (request, response) => {
 
   let pageVariables = {
     urls: urlDatabase,
-    user: usersDB[request.cookies.user_id]
+    user: usersDB[request.session.user_id]
     };
 
   response.render('urls-login', pageVariables);
@@ -202,14 +207,14 @@ app.get('/login', (request, response) => {
 });
 
 app.post('/logout', function(request, response){
-  response.clearCookie('user_id');
+  request.session = null;
   response.redirect('/login');
 });
 
 
 app.get("/u/:shortURL", (request, response) => {
 
-  if (request.cookies.user_id === undefined){
+  if (request.session.user_id === undefined){
     response.redirect('/register');
     return;
   }
@@ -223,7 +228,7 @@ app.get('/register', (request, response) => {
 
   let pageVariables = {
     urls: urlDatabase,
-    user: usersDB[request.cookies.user_id]
+    user: usersDB[request.session.user_id]
     };
 
   response.render('urls-register', pageVariables);
@@ -254,7 +259,7 @@ app.post('/register', (request, response) => {
   usersDB[newUserID].hashedPassword = hashedPassword;
   console.log(usersDB);
 
-  response.cookie('user_id', newUserID);
+  request.session.user_id = newUserID;
   response.redirect('/urls');
 
 });
