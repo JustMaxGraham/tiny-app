@@ -1,3 +1,8 @@
+<!--
+Login Page, only accessable if not logged in.
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,15 +20,13 @@
 
     <div>
 
-      <% if (!user) { %>
+      <form method="POST" action="/login?_method=PUT">
 
-        <form method="POST" action="/login?_method=PUT">
-            <input id="email" type="email" name="email" placeholder="Email" style="width: 300px">
-            <input id="password" type="text" name="password" placeholder="Password" style="width: 300px">
-            <input type="submit" value="Login">
-        </form>
+          <input id="email" type="email" name="email" placeholder="Email" style="width: 300px">
+          <input id="password" type="text" name="password" placeholder="Password" style="width: 300px">
+          <input type="submit" value="Login">
 
-      <% } %>
+      </form>
 
     </div>
 

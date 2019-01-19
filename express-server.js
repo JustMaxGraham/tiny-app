@@ -14,6 +14,8 @@ function generateRandomString() {
   return (randomString);
 }
 
+//Function filters the full urlDatabase and returns only
+//the TinyURLS for the logged in User.
 function urlsForUser(id){
   let filteredDB = {};
   for (let tinyURL in urlDatabase) {
@@ -92,6 +94,7 @@ Get Requests
 
 app.get('/', (request, response) => {
 
+  //Check if user is logged in and redirects accordingly
   if(request.session.user_id !== undefined){
     response.redirect('/urls');
   } else {
@@ -138,11 +141,13 @@ app.get('/urls/:id', (request, response) => {
     return;
   };
 
+  //Check to see if entered TinyURL exists.
   if (!urlDatabase[request.params.id]){
     response.status(404).send("This TinyURL does not exist. Check that you entered it correctly.");
     return;
   };
 
+  //Checks to see if current user has right to access TinyURL
   if (urlDatabase[request.params.id].userID !== request.session.user_id){
    response.status(404).send("You do not have access to this TinyURL.");
    return;
@@ -176,6 +181,7 @@ app.get('/login', (request, response) => {
 
 });
 
+//Redirects to full url that matches with TinyURL
 app.get("/u/:tinyURL", (request, response) => {
 
   if (!urlDatabase[request.params.tinyURL]){
@@ -183,16 +189,20 @@ app.get("/u/:tinyURL", (request, response) => {
     return;
   };
 
+  //Add to url visit count.
   urlDatabase[request.params.tinyURL].visits ++;
 
+  //Create a random id for visitors using the site
+  //Create a cookie for them to keep track of unique
+  //visit count. Give visit a timestamp.
   let visitorID = generateRandomString();
-
   request.session.visitor_id = visitorID;
-
   urlDatabase[request.params.tinyURL].uniqueVisits[visitorID] = Date();
 
   let longURL = urlDatabase[request.params.tinyURL].longURL;
 
+  //Make sure the long url in the database is valid
+  //If missing http:// , add that.
   if (validURL.isWebUri(longURL)){
     response.redirect(longURL);
     return;
@@ -227,6 +237,7 @@ Post Requests (PUT and DELETE)
 
 app.put('/urls', (request, response) => {
 
+  //Creates new TinyURLS, redirects back to index of user's TinyURLS
   if (request.session.user_id === undefined){
     response.status(404).send("Must be logged in to access.");
     return;
@@ -254,6 +265,7 @@ app.put('/urls', (request, response) => {
 
 });
 
+//Individual TinyURL's page
 app.put('/urls/:id', (request, response) => {
 
   if (request.session.user_id === undefined){
@@ -266,11 +278,13 @@ app.put('/urls/:id', (request, response) => {
    return;
   };
 
+  //Update long url with new url from edit form submission
   urlDatabase[request.params.id].longURL = request.body.editURL;
   response.redirect('/urls');
 
 });
 
+//Deletes a TinyURL from user's account.
 app.delete('/urls/:tinyURL/delete', (request, response) => {
 
   if (request.session.user_id === undefined){
@@ -308,13 +322,15 @@ app.put('/login', (request, response) => {
 });
 
 app.put('/logout', (request, response) => {
-  request.session = null;
+  request.session = null; //Clears cookies
   response.redirect('/login');
 });
 
 
 app.put('/register', (request, response) => {
 
+  //Create new users, generate a random Id
+  //Create a hased password using bcrypt
   let newUserID = generateRandomString();
   let newUserEmail = request.body.email;
   let hashedPassword = bcrypt.hashSync(request.body.password, 10);
@@ -331,12 +347,13 @@ app.put('/register', (request, response) => {
     };
   };
 
+  //New User Object
   usersDB[newUserID] = { id: '' , email: '', hashedPassword: ''};
   usersDB[newUserID].id = newUserID;
   usersDB[newUserID].email = newUserEmail;
   usersDB[newUserID].hashedPassword = hashedPassword;
 
-  request.session.user_id = newUserID;
+  request.session.user_id = newUserID; //Creates user's cookies
   response.redirect('/urls');
 
 });
