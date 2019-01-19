@@ -331,21 +331,23 @@ app.put('/register', (request, response) => {
 
   //Create new users, generate a random Id
   //Create a hased password using bcrypt
-  let newUserID = generateRandomString();
-  let newUserEmail = request.body.email;
-  let hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
-  if (newUserID === '' || newUserEmail === '') {
-    response.status(404).send("Fields blank.");
+  if (request.body.email === '' || request.body.password === '') {
+    response.status(404).send("One or more fields blank. Please enter both a valid email and password.");
     return;
-  }
+  };
 
   for (let user in usersDB){
-    if (usersDB[user].email === newUserEmail){
-      response.status(404).send("Email already registered");
+    if (usersDB[user].email === request.body.email){
+      response.status(404).send("Email already registered.");
       return;
     };
   };
+
+
+  let newUserID = generateRandomString();
+  let newUserEmail = request.body.email;
+  let hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
   //New User Object
   usersDB[newUserID] = { id: '' , email: '', hashedPassword: ''};
