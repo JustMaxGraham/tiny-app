@@ -96,7 +96,7 @@ app.get('/', (request, response) => {
     response.redirect('/urls');
   } else {
     response.redirect('/login');
-  }
+  };
 
 });
 
@@ -105,7 +105,7 @@ app.get('/urls', (request, response) => {
   if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
-  }
+  };
 
   let pageVariables = {
     urls: urlsForUser(request.session.user_id),
@@ -121,7 +121,7 @@ app.get('/urls/new',(request, response) => {
   if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
-  }
+  };
 
   let pageVariables = {
     user: usersDB[request.session.user_id]
@@ -136,17 +136,17 @@ app.get('/urls/:id', (request, response) => {
   if (request.session.user_id === undefined){
     response.redirect('/login');
     return;
-  }
+  };
 
   if (!urlDatabase[request.params.id]){
-    response.status(403).send("This TinyURL does not exist. Check that you entered it correctly.");
+    response.status(404).send("This TinyURL does not exist. Check that you entered it correctly.");
     return;
-  }
+  };
 
   if (urlDatabase[request.params.id].userID !== request.session.user_id){
-   response.status(403).send("You do not have access to this TinyURL.");
+   response.status(404).send("You do not have access to this TinyURL.");
    return;
-  }
+  };
 
 
   let pageVariables = {
@@ -164,7 +164,7 @@ app.get('/login', (request, response) => {
   if (request.session.user_id !== undefined){
     response.redirect('/urls');
     return;
-  }
+  };
 
 
   let pageVariables = {
@@ -181,7 +181,7 @@ app.get("/u/:tinyURL", (request, response) => {
   if (!urlDatabase[request.params.tinyURL]){
     response.status(404).send("Not a valid TinyURL. Please check that you entered it correctly. test test");
     return;
-  }
+  };
 
   urlDatabase[request.params.tinyURL].visits ++;
 
@@ -199,7 +199,7 @@ app.get("/u/:tinyURL", (request, response) => {
   } else {
     response.redirect('http://' + longURL);
     return;
-  }
+  };
 
 });
 
@@ -208,7 +208,7 @@ app.get('/register', (request, response) => {
   if (request.session.user_id !== undefined){
     response.redirect('/urls');
     return;
-  }
+  };
 
 
   let pageVariables = {
@@ -222,15 +222,15 @@ app.get('/register', (request, response) => {
 
 
 /**************************
-Post Requests
+Post Requests (PUT and DELETE)
 **************************/
 
 app.put('/urls', (request, response) => {
 
   if (request.session.user_id === undefined){
-    response.status(403).send("Must be logged in to access.");
+    response.status(404).send("Must be logged in to access.");
     return;
-  }
+  };
 
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = {
@@ -257,14 +257,14 @@ app.put('/urls', (request, response) => {
 app.put('/urls/:id', (request, response) => {
 
   if (request.session.user_id === undefined){
-    response.status(403).send("Must be logged in to access.");
+    response.status(404).send("Must be logged in to access.");
     return;
-  }
+  };
 
   if (urlDatabase[request.params.id].userID !== request.session.user_id){
-   response.status(403).send("You do not have access to this TinyURL.");
+   response.status(404).send("You do not have access to this TinyURL.");
    return;
-  }
+  };
 
   urlDatabase[request.params.id].longURL = request.body.editURL;
   response.redirect('/urls');
@@ -274,14 +274,14 @@ app.put('/urls/:id', (request, response) => {
 app.delete('/urls/:tinyURL/delete', (request, response) => {
 
   if (request.session.user_id === undefined){
-    response.status(403).send("Must be logged in to access.");
+    response.status(404).send("Must be logged in to access.");
     return;
-  }
+  };
 
   if (urlDatabase[request.params.tinyURL].userID !== request.session.user_id){
-   response.status(403).send("You do not have access to this TinyURL.");
+   response.status(404).send("You do not have access to this TinyURL.");
    return;
-  }
+  };
 
   delete urlDatabase[request.params.tinyURL];
   response.redirect('/urls');
@@ -297,13 +297,13 @@ app.put('/login', (request, response) => {
         response.redirect('/urls');
         return;
       } else {
-        response.status(403).send("Wrong Password");
+        response.status(404).send("Wrong Password");
         return;
-      }
-    }
-  }
+      };
+    };
+  };
 
-  response.status(403).send("Email not found.");
+  response.status(404).send("Email not found.");
 
 });
 
@@ -320,16 +320,16 @@ app.put('/register', (request, response) => {
   let hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
   if (newUserID === '' || newUserEmail === '') {
-    response.status(400).send("Fields blank.");
+    response.status(404).send("Fields blank.");
     return;
   }
 
   for (let user in usersDB){
     if (usersDB[user].email === newUserEmail){
-      response.status(400).send("Email already registered");
+      response.status(404).send("Email already registered");
       return;
-    }
-  }
+    };
+  };
 
   usersDB[newUserID] = { id: '' , email: '', hashedPassword: ''};
   usersDB[newUserID].id = newUserID;

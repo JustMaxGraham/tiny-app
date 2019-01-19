@@ -23,11 +23,13 @@
             <form method="POST" action= <%= actionPath %> >
 
               <li list-style-type: none;>
+
                 <dir>
                   <%= tinyURL %> -- Created: <%= date %> -- Visits: <%= urls[tinyURL].visits %> -- <%= urls[tinyURL].longURL %>
                   <a href="urls/<%= tinyURL %>"> Edit </a>
                   <input  style="display: inline; float: right;" type="submit" value="Delete">
                 </dir>
+
               </li>
 
             </form>

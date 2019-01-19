@@ -18,25 +18,24 @@
 
     <h3>Update URL below:</h3>
 
-      <form method="POST" action= <%= `/urls/${TinyURL}?_method=PUT` %>>
-        <input id="editURL" type="text" name="editURL" placeholder= <%=urls[TinyURL].longURL%> style="width: 300px">
-        <input type="submit" value="Update URL">
-      </form>
+    <form method="POST" action= <%= `/urls/${TinyURL}?_method=PUT` %>>
+      <input id="editURL" type="text" name="editURL" placeholder= <%=urls[TinyURL].longURL%> style="width: 300px">
+      <input type="submit" value="Update URL">
+    </form>
 
-      <div style="margin-top: 20px; margin-bottom: 20px">
-        <a href="/urls">Back to your URLs</a>
-      </div>
+    <div style="margin-top: 20px; margin-bottom: 20px">
+      <a href="/urls">Back to your URLs</a>
+    </div>
 
-      <h3>List of unique visits:</h3>
-      <% for (uniqueVisit in urls[TinyURL].uniqueVisits) {%>
+    <h3>List of unique visits:</h3>
 
-        <li list-style-type: none;>
+    <% for (uniqueVisit in urls[TinyURL].uniqueVisits) {%>
 
-            <%= uniqueVisit %> -- <%= urls[TinyURL].uniqueVisits[uniqueVisit]  %>
+    <li list-style-type: none;>
+        <%= uniqueVisit %> -- <%= urls[TinyURL].uniqueVisits[uniqueVisit]  %>
+    </li>
 
-        </li>
-
-      <% } %>
+    <% } %>
 
   </body>
 
